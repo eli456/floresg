@@ -9,6 +9,7 @@ function ReactionButton({ reactionType, onClick, count }) {
       {reactionType}: {count}
     </button>
   );
+  
 }
 
 export default class Flores extends Component {
