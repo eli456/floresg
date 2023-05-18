@@ -2,7 +2,8 @@ import React, { Component } from "react";
 import TutorialDataService from "../servicios/flores.service";
 import "../styles/Mostrar.css";
 import Flores from "./flores.component";
-
+import Reactions from './reactions.component';
+import CommentBox from './comments.component';
 
 export default class FloresList extends Component {
   constructor(props) {
@@ -75,8 +76,8 @@ export default class FloresList extends Component {
           {datos &&
             datos.map((Datos_List, index) => {
               return (
-                <div class="card card3" >
-                  <div className="inner">
+                <div class="" >
+                  <div className="">
                     <button
                       className={+(index === currentIndex ? "active" : "")
                       }
@@ -84,15 +85,23 @@ export default class FloresList extends Component {
                       key={index}
                     >
                       {Datos_List.title}
+                      <tr>
+                        {Datos_List.description}
+                      </tr>
+                      <img src={Datos_List.url} width="540" height="280" alt=""/>
                     </button>
                   </div>
+                  <tr>
+                    <Reactions />
+                  </tr>
+                  <tr>
+                    <CommentBox />
+                  </tr>
                 </div>
               );
             })}
-
           <ul className="list-group"></ul>
         </div>
-
         <div className="col-md-6">
           {currentTutorial ? (
             <Flores
