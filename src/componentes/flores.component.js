@@ -1,16 +1,6 @@
 import React, { Component } from "react";
-import firebase from "firebase/compat/app";
-import "firebase/firestore";
 import TutorialDataService from "../servicios/flores.service";
 
-function ReactionButton({ reactionType, onClick, count }) {
-  return (
-    <button onClick={onClick}>
-      {reactionType}: {count}
-    </button>
-  );
-  
-}
 
 export default class Flores extends Component {
   constructor(props) {
@@ -30,22 +20,7 @@ export default class Flores extends Component {
         published: false,
       },
       message: "",
-      reactions: {
-        like: 0,
-        love: 0,
-        haha: 0,
-        wow: 0,
-        sad: 0,
-        angry: 0,
-      },
-      comment: "",
     };
-    this.handleCommentChange = this.handleCommentChange.bind(this);
-    this.handleCommentSubmit = this.handleCommentSubmit.bind(this);
-  }
-
-  handleCommentChange(event) {
-    this.setState({ comment: event.target.value });
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -53,7 +28,7 @@ export default class Flores extends Component {
     if (prevState.currentTutorial.id !== tutorial.id) {
       return {
         currentTutorial: tutorial,
-        message: "",
+        message: ""
       };
     }
 
@@ -90,20 +65,6 @@ export default class Flores extends Component {
     }));
   }
 
-  handleReactionClick(reactionType) {
-    const newReactions = { ...this.state.reactions };
-    newReactions[reactionType]++;
-    this.setState({ reactions: newReactions });
-
-    const itemRef = firebase
-      .firestore()
-      .collection("items")
-      .doc(this.state.currentTutorial.id);
-    itemRef.update({
-      [`${reactionType}_count`]: firebase.firestore.FieldValue.increment(1),
-    });
-  }
-
   updatePublished(status) {
     TutorialDataService.update(this.state.currentTutorial.id, {
       published: status,
@@ -131,7 +92,7 @@ export default class Flores extends Component {
     TutorialDataService.update(this.state.currentTutorial.id, data)
       .then(() => {
         this.setState({
-          message: "The flower was updated successfully!",
+          message: "The Hypercar was updated successfully!",
         });
       })
       .catch((e) => {
@@ -149,33 +110,12 @@ export default class Flores extends Component {
       });
   }
 
-  handleCommentSubmit(event) {
-    event.preventDefault();
-    const comment = {
-      content: this.state.comment,
-      date: new Date(),
-    };
-    firebase
-      .firestore()
-      .collection("CajaComentarios")
-      .doc(this.state.currentTutorial.id)
-      .collection("Comentarios")
-      .add(comment)
-      .then(() => {
-        console.log("Comentario guardado!");
-      })
-      .catch((error) => {
-        console.error("Error al guardar comentario: ", error);
-      });
-    this.setState({ comment: "" });
-  }
-
   render() {
-    const { currentTutorial, reactions, comment } = this.state;
+    const { currentTutorial } = this.state;
 
     return (
       <div>
-        <h4> Flores Uwu </h4>
+        <h4>Flores</h4>
         {currentTutorial ? (
           <div className="edit-form">
             <form>
@@ -201,9 +141,8 @@ export default class Flores extends Component {
               </div>
               <div className="form-group">
                 <label htmlFor="url"> Imagen: </label>
-                <img src={currentTutorial.url} alt="Hola"></img>
+                <img src={currentTutorial.url} alt="Pic" width="540" height="280"></img>
               </div>
-
               <div className="form-group">
                 <label>
                   <strong>Status:</strong>
@@ -211,16 +150,17 @@ export default class Flores extends Component {
                 {currentTutorial.published ? "Published" : "Pending"}
               </div>
             </form>
+
             {currentTutorial.published ? (
               <button
-                className="badge badge-primary mr-2"
+                class="btn btn-outline-secondary"
                 onClick={() => this.updatePublished(false)}
               >
                 UnPublish
               </button>
             ) : (
               <button
-                className="badge badge-primary mr-2"
+                class="btn btn-success"
                 onClick={() => this.updatePublished(true)}
               >
                 Publish
@@ -228,7 +168,7 @@ export default class Flores extends Component {
             )}
 
             <button
-              className="badge badge-danger mr-2"
+              class="btn btn-danger"
               onClick={this.deleteTutorial}
             >
               Delete
@@ -236,77 +176,18 @@ export default class Flores extends Component {
 
             <button
               type="submit"
-              className="badge badge-success"
+              class="btn btn-primary"
               onClick={this.updateTutorial}
             >
               Update
             </button>
+            <p>{this.state.message}</p>
+
           </div>
         ) : (
           <div>
             <br />
-            <p>Selecciona una flor </p>
-          </div>
-        )}
-
-        <div>
-          <ReactionButton
-            reactionType="Like"
-            onClick={() => this.handleReactionClick("like")}
-            count={reactions.like}
-          />
-          <ReactionButton
-            reactionType="Love"
-            onClick={() => this.handleReactionClick("love")}
-            count={reactions.love}
-          />
-          <ReactionButton
-            reactionType="Haha"
-            onClick={() => this.handleReactionClick("haha")}
-            count={reactions.haha}
-          />
-          <ReactionButton
-            reactionType="Wow"
-            onClick={() => this.handleReactionClick("wow")}
-            count={reactions.wow}
-          />
-          <ReactionButton
-            reactionType="Sad"
-            onClick={() => this.handleReactionClick("sad")}
-            count={reactions.sad}
-          />
-          <ReactionButton
-            reactionType="Angry"
-            onClick={() => this.handleReactionClick("angry")}
-            count={reactions.angry}
-          />
-        </div>
-
-        {currentTutorial ? (
-          <div className="edit-form">
-            <form>{/* existing form elements */}</form>
-            <div className="comment-form">
-              <form onSubmit={this.handleCommentSubmit}>
-                <div className="form-group">
-                  <label htmlFor="comment">Ingresa un comentario: </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="comment"
-                    value={comment}
-                    onChange={this.handleCommentChange}
-                  />
-                </div>
-                <button type="submit" className="btn btn-primary">
-                  Submit
-                </button>
-              </form>
-            </div>
-          </div>
-        ) : (
-          <div>
-            <br />
-            <p>Selecciona una Flor</p>
+            <p>Please click on a Hypercar...</p>
           </div>
         )}
       </div>
