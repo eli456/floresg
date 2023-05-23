@@ -88,7 +88,7 @@ export default class FloresList extends Component {
                       <tr>
                         {Datos_List.description}
                       </tr>
-                      <img src={Datos_List.url} width="540" height="280" />
+                      <img src={Datos_List.url} width="540" height="280" alt=""/>
                     </button>
                   </div>
                   <tr>
